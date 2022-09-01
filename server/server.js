@@ -1,33 +1,32 @@
 const express = require('express');
-const app = express(); // const app = require('express')();
 const cors = require('cors')
-
- 
 const http = require('http');
-const server = http.createServer(app);   //const server = require('http').createServer(app);
-const { Server } = require("socket.io");
-app.use(cors());
+const socketio = require("socket.io")
 
-const io = new Server(server,{
+// Declarations
+const app = express();
+const server = http.createServer(app); 
+const io = new socketio.Server(http, {
     cors:{
         origin:"http://localhost:3000",
         methods:["GET","POST"]
     }
-});
+})
 
+const PORT = process.env.PORT || 8000;
 
-const port = process.env.port||8000;
+// Express Middleware
+app.use(cors());
 
-// app.get('/',(req,res)=>{
-//     res.send("hello world")
-
-// })
-console.log("hello");
+// Routes
+app.route("/")
+    .get((req, res)=>{
+        return res.send("Server is running");
+    })
 
 const allUser =[];
-io.on('connection', (socket) => { // conncetion is an event which is inbuild in io
-    
-    console.log('a user connected with this id' ,socket.id);
+io.on('connection', (socket) => { 
+    console.log('New Connection');
 
     socket.on("joinUser",(name)=>{
         console.log(name);
@@ -56,12 +55,8 @@ io.on('connection', (socket) => { // conncetion is an event which is inbuild in 
 
   });
 
-console.log("hello2");
 
-
-
-
-server.listen(port,()=>{
-    console.log("listining to port no" , port);
+server.listen(PORT,()=>{
+    console.log(`Server is running on port ${PORT}`);
 })
 
