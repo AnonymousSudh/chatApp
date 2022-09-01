@@ -1,0 +1,40 @@
+.main_div{
+    border: 1px solid red;
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    /* justify-content: center; */
+    flex-direction: column;
+    align-items: center;
+}
+.chatDiv{
+    border: 1px solid green;
+    width: 70vw;
+    height: 90%;
+    position: relative;
+}
+.sender{
+    border: 1px solid red;
+    position: absolute;
+    right: 0;
+    /* width: 100%; */
+}
+.reciver{
+    border: 1px solid red;
+    position: absolute;
+    /* left: ; */
+    left: 0;
+}
+.msgBox{
+    /* border: 1px solid red; */
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 4vh;
+}
+/* .msgBox/ */
+#inputMsg{
+    width: 90%;
+    height: 100%;
+}
+
