@@ -1,12 +1,15 @@
 const express = require('express');
-const cors = require('cors')
+const cors = require("cors");
 const http = require('http');
 const socketio = require("socket.io")
 
 // Declarations
 const app = express();
 const server = http.createServer(app); 
-const io = new socketio.Server(http, {
+
+app.use(cors());
+
+const io = new socketio.Server(server, {
     cors:{
         origin:"http://localhost:3000",
         methods:["GET","POST"]
@@ -16,7 +19,6 @@ const io = new socketio.Server(http, {
 const PORT = process.env.PORT || 8000;
 
 // Express Middleware
-app.use(cors());
 
 // Routes
 app.route("/")
@@ -24,26 +26,32 @@ app.route("/")
         return res.send("Server is running");
     })
 
+let users = 0
 const allUser =[];
 io.on('connection', (socket) => { 
-    console.log('New Connection');
+    console.log('New Connection', socket.id);
 
-    socket.on("joinUser",(name)=>{
-        console.log(name);
-        allUser.push({name,"id":socket.id})
-        console.log(allUser);
+    socket.on("joinRoom",({ username, room }, cb)=>{
+       console.log(username, room);
+
+       // Join the room with the given room id.
+       socket.join(room);
+
+       // Emit the joinRoom event to the client.
+       socket.emit("joinedRoom", "Joined the chat room");
+
+       socket.on("sendMessage", (message, cb)=>{
+        console.log("Message from client: ", message);
+        io.to(room).emit("message", message);
+        cb();
+       })
     })
     
     
-    socket.on("sendMsgg",(data)=>{
-        console.log(data);
-        if(data){
-
-            socket.broadcast.emit("recivedmsg",data.msg);
-            return;
-        }
-        // socket.broadcast.emit("recivedmsg","hello");
-        // socket.broadcast.emit('hi');
+    socket.on("sendMsg",({ message }, cb)=>{
+        console.log(message);
+        socket.emit("message", message);
+        cb()
     })
 
     // socket.on("")

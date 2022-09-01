@@ -1,10 +1,13 @@
 import React from 'react'
 import { Chat } from './components/Chat';
+import { MessageBox } from './components/MessageBox';
 
 function App() {
-  // console.log(" i am at app");
   return (
-    <Chat />
+    <div>
+      <MessageBox />
+      <Chat />
+    </div>
   );
 }
 
