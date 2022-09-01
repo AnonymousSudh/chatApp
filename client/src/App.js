@@ -1,13 +1,13 @@
 import React from 'react'
-import Meetup from "./components/Meetup";
-// import io from 'socket.io-client';
-
-// const socket = io.connect("http://localhost:8000")
+import { Chat } from './components/Chat';
+import { MessageBox } from './components/MessageBox';
 
 function App() {
-  // console.log(" i am at app");
   return (
-    <Meetup />
+    <div>
+      <MessageBox />
+      <Chat />
+    </div>
   );
 }
 

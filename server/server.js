@@ -1,50 +1,57 @@
 const express = require('express');
-const app = express(); // const app = require('express')();
-const cors = require('cors')
-
- 
+const cors = require("cors");
 const http = require('http');
-const server = http.createServer(app);   //const server = require('http').createServer(app);
-const { Server } = require("socket.io");
+const socketio = require("socket.io")
+
+// Declarations
+const app = express();
+const server = http.createServer(app); 
+
 app.use(cors());
 
-const io = new Server(server,{
+const io = new socketio.Server(server, {
     cors:{
         origin:"http://localhost:3000",
         methods:["GET","POST"]
     }
-});
+})
 
+const PORT = process.env.PORT || 8000;
 
-const port = process.env.port||8000;
+// Express Middleware
 
-// app.get('/',(req,res)=>{
-//     res.send("hello world")
+// Routes
+app.route("/")
+    .get((req, res)=>{
+        return res.send("Server is running");
+    })
 
-// })
-console.log("hello");
-
+let users = 0
 const allUser =[];
-io.on('connection', (socket) => { // conncetion is an event which is inbuild in io
-    
-    console.log('a user connected with this id' ,socket.id);
+io.on('connection', (socket) => { 
+    console.log('New Connection', socket.id);
 
-    socket.on("joinUser",(name)=>{
-        console.log(name);
-        allUser.push({name,"id":socket.id})
-        console.log(allUser);
+    socket.on("joinRoom",({ username, room }, cb)=>{
+       console.log(username, room);
+
+       // Join the room with the given room id.
+       socket.join(room);
+
+       // Emit the joinRoom event to the client.
+       socket.emit("joinedRoom", "Joined the chat room");
+
+       socket.on("sendMessage", (message, cb)=>{
+        console.log("Message from client: ", message);
+        io.to(room).emit("message", message);
+        cb();
+       })
     })
     
     
-    socket.on("sendMsgg",(data)=>{
-        console.log(data);
-        if(data){
-
-            socket.broadcast.emit("recivedmsg",data.msg);
-            return;
-        }
-        // socket.broadcast.emit("recivedmsg","hello");
-        // socket.broadcast.emit('hi');
+    socket.on("sendMsg",({ message }, cb)=>{
+        console.log(message);
+        socket.emit("message", message);
+        cb()
     })
 
     // socket.on("")
@@ -56,12 +63,8 @@ io.on('connection', (socket) => { // conncetion is an event which is inbuild in 
 
   });
 
-console.log("hello2");
 
-
-
-
-server.listen(port,()=>{
-    console.log("listining to port no" , port);
+server.listen(PORT,()=>{
+    console.log(`Server is running on port ${PORT}`);
 })
 

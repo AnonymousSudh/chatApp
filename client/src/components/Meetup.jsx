@@ -13,16 +13,12 @@ require('./meetup.css')
 function Meetup() {
 
   const [msg, setMsg] = useState("");
-
-
-
-  
   
   const sendMsg = async () => {
     console.log(msg);
     const data = document.createElement("h1")
     data.append(msg)
-    const textmsg = document.getElementsByClassName("sender")[0].appendChild(data);
+    // const textmsg = document.getElementsByClassName("sender")[0].appendChild(data);
     document.getElementById("inputMsg").value = "";   
     socket.emit("sendMsgg", {msg:msg,id:socket.id});
 
